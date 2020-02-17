@@ -57,7 +57,7 @@ def test_read_raster_band(some_raster_path):
 
 
 def test_read_raster_single_band(some_raster_path):
-    array = read_raster(some_raster_path, band=3)
+    array = read_raster(some_raster_path, bands=3)
     assert isinstance(array, da.Array)
 
     expected_array = read_raster_band(some_raster_path, band=3)
@@ -67,7 +67,7 @@ def test_read_raster_single_band(some_raster_path):
 
 
 def test_read_raster_multi_band(some_raster_path):
-    array = read_raster(some_raster_path, band=(1, 3))
+    array = read_raster(some_raster_path, bands=(1, 3))
     assert isinstance(array, da.Array)
 
     expected_array = da.stack([
@@ -92,13 +92,13 @@ def test_do_calcs_on_array(some_raster_path):
 
 def test_write_raster_band(some_raster_path):
     with tempfile.TemporaryDirectory(prefix='dask_rasterio_test_') as tmpdir:
-        # Read first band of raster
+        # Read first bands of raster
         array = read_raster_band(some_raster_path, 1)
 
         # Generate new data
         new_array = array & (array > THRESHOLD)
 
-        # Build a profile for the new single-band GeoTIFF
+        # Build a profile for the new single-bands GeoTIFF
         prof = get_profile(some_raster_path)
         prof.update(count=1)
 
@@ -132,14 +132,14 @@ def test_write_raster(some_raster_path):
 
 def test_write_raster_band_from_numpy(some_raster_path):
     with tempfile.TemporaryDirectory(prefix='dask_rasterio_test_') as tmpdir:
-        # Read first band of raster with Rasterio
+        # Read first bands of raster with Rasterio
         with rasterio.open(some_raster_path) as src:
             array = src.read(1)
 
         # Generate new data
         new_array = array & (array > THRESHOLD)
 
-        # Build a profile for the new single-band GeoTIFF
+        # Build a profile for the new single-bands GeoTIFF
         prof = get_profile(some_raster_path)
         prof.update(count=1)
 

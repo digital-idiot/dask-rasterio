@@ -8,17 +8,17 @@ from rasterio.windows import Window
 def write_raster(path, array, **kwargs):
     """Write a dask array to a raster file
 
-    If array is 2d, write array on band 1.
-    If array is 3d, write data on each band
+    If array is 2d, write array on bands 1.
+    If array is 3d, write data on each bands
 
     Arguments:
         path {string} -- path of raster to write
-        array {dask.array.Array} -- band array
+        array {dask.array.Array} -- bands array
         kwargs {dict} -- keyword arguments to delegate to rasterio.open
 
     Examples:
-        # Write a single band raster
-        >> red_band = read_raster_band("test.tif", band=1)
+        # Write a single bands raster
+        >> red_band = read_raster_band("test.tif", bands=1)
         >> write_raster("new.tif", red_band)
 
         # Write a multiband raster

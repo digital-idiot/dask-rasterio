@@ -30,7 +30,7 @@ dask.array<mean_agg-aggregate, shape=(), dtype=float64, chunksize=()>
 ```python
 >>> from dask_rasterio import read_raster
 
->>> array = read_raster('tests/data/RGB.byte.tif', band=3)
+>>> array = read_raster('tests/data/RGB.byte.tif', bands=3)
 >>> array
 dask.array<raster, shape=(718, 791), dtype=uint8, chunksize=(3, 791)>
 ```
