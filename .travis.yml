@@ -16,7 +16,7 @@ before_install:
   - pip install poetry
 
 install:
-  - travis_retry pip install poetry
+  - travis_retry poetry install
 
 addons:
   apt:
