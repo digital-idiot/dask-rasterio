@@ -70,8 +70,8 @@ def test_read_raster_multi_band(some_raster_path):
     assert isinstance(array, da.Array)
 
     expected_array = da.stack([
-        read_raster_band(some_raster_path, band=1),
-        read_raster_band(some_raster_path, band=3)
+        read_raster(some_raster_path, bands=1),
+        read_raster(some_raster_path, bands=3)
     ])
     assert array.shape == expected_array.shape
     assert array.dtype == expected_array.dtype
