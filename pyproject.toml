@@ -1,17 +1,18 @@
 [tool.poetry]
 name = "dask-rasterio"
-version = "0.2.1"
+version = "0.2.1b"
 description = "Read and write rasters in parallel using Rasterio and Dask"
 license = "BSD-2-Clause"
 readme = "README.md"
 homepage = "https://github.com/dymaxionlabs/dask-rasterio"
-repository = "https://github.com/dymaxionlabs/dask-rasterio"
-authors = ["Damián Silvani <munshkr@gmail.com>"]
+repository = "https://github.com/digital-idiot/dask-rasterio"
+authors = ["Abhisek Maiti <mail2abhisek.maiti@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3"
-dask = "^0.17.5"
-rasterio = {version = "^1.0b1", allows-prereleases = true}
+numpy = "1.18.1"
+dask = "^2.10.1"
+rasterio = {version = "^1.1.0", allow-prereleases = true}
 toolz = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
