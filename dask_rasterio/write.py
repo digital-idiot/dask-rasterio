@@ -1,18 +1,18 @@
-import dask.array as da
 import rasterio
+import dask.array as da
 from dask import is_dask_collection
-from dask.base import tokenize
 from rasterio.windows import Window
 
 
 def write_raster(path, array, **kwargs):
-    """Write a dask array to a raster file
+    """
+    Write a dask array to a raster file
 
     If array is 2d, write array on bands 1.
     If array is 3d, write data on each bands
 
     Arguments:
-        path {string} -- path of raster to write
+        image_path {string} -- image_path of raster to write
         array {dask.array.Array} -- bands array
         kwargs {dict} -- keyword arguments to delegate to rasterio.open
 
@@ -21,7 +21,7 @@ def write_raster(path, array, **kwargs):
         >> red_band = read_raster_band("test.tif", bands=1)
         >> write_raster("new.tif", red_band)
 
-        # Write a multiband raster
+        # Write a multi-band raster
         >> img = read_raster("test.tif")
         >> new_img = process(img)
         >> write_raster("new.tif", new_img)
@@ -42,14 +42,20 @@ def write_raster(path, array, **kwargs):
 
 
 class RasterioDataset:
-    """Rasterio wrapper to allow dask.array.store to do window saving.
+    """
+    Rasterio wrapper to allow dask.array.store to do window saving.
 
     Example:
         >> rows = cols = 21696
-        >> a = da.ones((4, rows, cols), dtype=np.float64, chunks=(1, 4096, 4096) )
+        >> a = da.ones(
+            (4, rows, cols), dtype=np.float64, chunks=(1, 4096, 4096)
+        )
         >> a = a * np.array([255., 255., 255., 255.])[:, None, None]
         >> a = a.astype(np.uint8)
-        >> with RasterioDataset('test.tif', 'w', driver='GTiff', width=cols, height=rows, count=4, dtype=np.uint8) as r_file:
+        >> with RasterioDataset(
+            'test.tif', 'w', driver='GTiff', width=cols, height=rows,
+            count=4, dtype=np.uint8
+        ) as r_file:
         ..    da.store(a, r_file, lock=True)
     """
 

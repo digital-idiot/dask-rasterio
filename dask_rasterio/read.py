@@ -5,16 +5,18 @@ from dask.base import tokenize
 from rasterio.windows import Window
 
 
-def read_raster(path, bands=None, masked=False, block_size=1):
+def read_raster(image_path, bands=None, masked=False, block_size=1):
     """
     Read all or some band_ids from raster
 
     Arguments:
-        path {string} -- path to raster file
+        image_path {string} -- image_path to raster file
 
     Keyword Arguments:
         bands {int, iterable(int)} -- bands number or iterable of band_ids.
             When passing None, it reads all band_ids (default: {None})
+        masked {bool} -- If `True`, returns masked array masking `nodata` values
+            (default: {False})
         block_size {int} -- block size multiplier (default: {1})
 
     Returns:
@@ -44,10 +46,10 @@ def read_raster(path, bands=None, masked=False, block_size=1):
             for pos, win in data_set.block_windows(bidx=band_id)
         ]
 
-    assert isinstance(path, (str, pathlib.Path))
-    if isinstance(path, str):
-        path = pathlib.Path(path)
-    with rasterio.open(path) as src:
+    assert isinstance(image_path, (str, pathlib.Path))
+    if isinstance(image_path, str):
+        image_path = pathlib.Path(image_path)
+    with rasterio.open(image_path) as src:
         if bands is None:
             bands = list(range(1, (src.count + 1)))
         b_shapes = np.array(src.block_shapes)
@@ -68,20 +70,19 @@ def read_raster(path, bands=None, masked=False, block_size=1):
         ) == 1, "No 'dtype' found!\n** Possibly corrupted File **"
         dtype = u_dtypes.pop()
         blocks = block_windows(src, block_size)
-        name = 'Raster-{}'.format(tokenize(path.absolute(), bands, chunks))
+        name = 'Raster-{}'.format(tokenize(image_path.absolute(), bands, chunks))
         if isinstance(bands, (tuple, list)):
             shape = len(bands), *src.shape
             dsk = {
-                (name, 0, i, j): (read_window, path, window, bands, masked)
+                (name, 0, i, j): (read_window, image_path, window, bands, masked)
                 for (i, j), window in blocks
             }
         else:
             shape = src.shape
             dsk = {
-                (name, i, j): (read_window, path, window, bands, masked)
+                (name, i, j): (read_window, image_path, window, bands, masked)
                 for (i, j), window in blocks
             }
-        # return dsk, name, chunks, dtype, shape
         return da.Array(
             dask=dsk,
             name=name,
@@ -89,48 +90,6 @@ def read_raster(path, bands=None, masked=False, block_size=1):
             dtype=dtype,
             shape=shape
         )
-
-
-def read_raster_band(path, band=1, masked=False, block_size=1):
-    """
-    Read a raster band_id and return a Dask array
-
-    Arguments:
-        path {string} -- path to the raster file
-
-    Keyword Arguments:
-        band_id {int} -- number of band_id to read (default: {1})
-        blk_size {int} -- block size multiplier (default: {1})
-
-    """
-
-    def read_window(raster_path, window, band_id):
-        with rasterio.open(raster_path) as src_path:
-            return src_path.read(band_id, window=window, masked=masked)
-
-    def resize_window(window, blk_size):
-        return Window(
-            col_off=window.col_off * blk_size,
-            row_off=window.row_off * blk_size,
-            width=window.width * blk_size,
-            height=window.height * blk_size)
-
-    def block_windows(data_set, band_id, blk_size):
-        return [(pos, resize_window(win, blk_size))
-                for pos, win in data_set.block_windows(band_id)]
-
-    with rasterio.open(path) as src:
-        h, w = src.block_shapes[band - 1]
-        chunks = (h * block_size, w * block_size)
-        name = 'raster-{}'.format(tokenize(path, band, chunks))
-        dtype = src.dtypes[band - 1]
-        shape = src.shape
-        blocks = block_windows(src, band, block_size)
-
-    dsk = {(name, i, j): (read_window, path, window, band)
-           for (i, j), window in blocks}
-
-    return da.Array(dsk, name, chunks, dtype, shape)
 
 
 def get_band_count(raster_path):
