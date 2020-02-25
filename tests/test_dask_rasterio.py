@@ -7,8 +7,7 @@ import pytest
 import rasterio
 from numpy.testing import assert_array_equal
 
-from dask_rasterio import (__version__, read_raster, read_raster_band,
-                           write_raster)
+from dask_rasterio import (__version__, read_raster, write_raster)
 from dask_rasterio.read import get_band_count
 
 THRESHOLD = 127
@@ -46,7 +45,7 @@ def test_read_raster(some_raster_path):
 
 
 def test_read_raster_band(some_raster_path):
-    g_array = read_raster_band(some_raster_path, 2)
+    g_array = read_raster(some_raster_path, 2)
     assert isinstance(g_array, da.Array)
 
     with rasterio.open(some_raster_path) as src:
@@ -60,7 +59,7 @@ def test_read_raster_single_band(some_raster_path):
     array = read_raster(some_raster_path, bands=3)
     assert isinstance(array, da.Array)
 
-    expected_array = read_raster_band(some_raster_path, band=3)
+    expected_array = read_raster(some_raster_path, bands=3)
     assert array.shape == expected_array.shape
     assert array.dtype == expected_array.dtype
     assert_array_equal(array.compute(), expected_array.compute())
@@ -80,7 +79,7 @@ def test_read_raster_multi_band(some_raster_path):
 
 
 def test_do_calcs_on_array(some_raster_path):
-    r_array = read_raster_band(some_raster_path, 1)
+    r_array = read_raster(some_raster_path, 1)
     mean = np.mean(r_array)
     assert isinstance(mean, da.Array)
 
@@ -93,7 +92,7 @@ def test_do_calcs_on_array(some_raster_path):
 def test_write_raster_band(some_raster_path):
     with tempfile.TemporaryDirectory(prefix='dask_rasterio_test_') as tmpdir:
         # Read first bands of raster
-        array = read_raster_band(some_raster_path, 1)
+        array = read_raster(some_raster_path, 1)
 
         # Generate new data
         new_array = array & (array > THRESHOLD)
@@ -188,12 +187,12 @@ def test_cannot_write_raster_with_badly_shaped_array(some_raster_path):
 def multiply_chunks(chunks, multiplier):
     w_chunks = tuple(np.array([list(chunks[0])])) * multiplier
     h_chunks = tuple(np.array([list(chunks[1])])) * multiplier
-    return (w_chunks, h_chunks)
+    return w_chunks, h_chunks
 
 
 def test_read_raster_band_with_block_size(some_raster_path):
-    array = read_raster_band(some_raster_path)
-    array_4b = read_raster_band(some_raster_path, block_size=4)
+    array = read_raster(some_raster_path, 1)
+    array_4b = read_raster(some_raster_path, 1, block_size=4)
     assert array.shape == array_4b.shape
     assert array.dtype == array_4b.dtype
     assert_array_equal(array, array_4b)
