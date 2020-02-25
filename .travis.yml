@@ -1,6 +1,8 @@
 
 language: python
 
+os: linux
+
 python:
   - "3.4"
   - "3.5"
@@ -10,7 +12,7 @@ python:
 
 before_install:
   - sudo apt-get install -y build-essential gdal-bin libgdal-dev libproj-dev
-  - pip install -U poetry
+  - pip install --user poetry
 
 install:
   - travis_retry poetry install
