@@ -40,7 +40,6 @@ def read_raster(image_path, bands=None, masked=False, block_size=1):
     def block_windows(data_set, blk_size):
         shape_list = data_set.block_shapes
         band_id = shape_list.index(min(shape_list)) + 1
-        # index of min(data_set.block_shapes)
         return [
             (pos, resize_window(win, blk_size))
             for pos, win in data_set.block_windows(bidx=band_id)
@@ -70,11 +69,15 @@ def read_raster(image_path, bands=None, masked=False, block_size=1):
         ) == 1, "No 'dtype' found!\n** Possibly corrupted File **"
         dtype = u_dtypes.pop()
         blocks = block_windows(src, block_size)
-        name = 'Raster-{}'.format(tokenize(image_path.absolute(), bands, chunks))
+        name = 'Raster-{}'.format(
+            tokenize(image_path.absolute(), bands, chunks)
+        )
         if isinstance(bands, (tuple, list)):
             shape = len(bands), *src.shape
             dsk = {
-                (name, 0, i, j): (read_window, image_path, window, bands, masked)
+                (name, 0, i, j): (
+                    read_window, image_path, window, bands, masked
+                )
                 for (i, j), window in blocks
             }
         else:
