@@ -16,9 +16,8 @@ The issue tracker is the preferred channel for [bug reports](#bugs),
 requests](#pull-requests), but please respect the following restrictions:
 
 * Please **do not** use the issue tracker for personal support requests (use
-  [Stack Overflow](http://stackoverflow.com), our
-  [Gitter channel](https://gitter.im/dymaxionlabs/dask-rasterio), or contact us
-  directly to [contact@dymaxionlabs.com](mailto:contact@dymaxionlabs.com)).
+  [Stack Overflow](http://stackoverflow.com),
+  or contact us directly to [mail2abhisek.maiti@gmail.com](mailto:mail2abhisek.maiti@gmail.com)).
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
