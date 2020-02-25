@@ -93,9 +93,3 @@ def read_raster(image_path, bands=None, masked=False, block_size=1):
             dtype=dtype,
             shape=shape
         )
-
-
-def get_band_count(raster_path):
-    """Read raster bands count"""
-    with rasterio.open(raster_path) as src:
-        return src.count

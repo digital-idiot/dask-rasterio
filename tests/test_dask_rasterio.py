@@ -8,7 +8,6 @@ import rasterio
 from numpy.testing import assert_array_equal
 
 from dask_rasterio import (__version__, read_raster, write_raster)
-from dask_rasterio.read import get_band_count
 
 THRESHOLD = 127
 
@@ -30,7 +29,7 @@ def some_raster_path():
 
 
 def test_version():
-    assert __version__ == '0.1.0'
+    assert __version__ == '0.1.1b'
 
 
 def test_read_raster(some_raster_path):
